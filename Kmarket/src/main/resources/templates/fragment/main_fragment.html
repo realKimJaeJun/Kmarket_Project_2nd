@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <section th:fragment="slider" class="slider">
+        <ul>
+            <li>
+                <a href="#">
+                    <img th:src="@{/thumb/event/event1.jpg}" alt="item1">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img th:src="@{/thumb/event/event2.jpg}" alt="item2">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img th:src="@{/thumb/event/event3.jpg}" alt="item3">
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img th:src="@{/thumb/event/event4.jpg}" alt="item4">
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section th:fragment="hit(hits)" class="hit">
+        <h3><span>히트상품</span></h3>
+        <article th:each="product:${hits}">
+            <a th:href="@{/product/view(cate1 = ${product.prodCate1}, cate2 = ${product.prodCate2}, prodNo = ${product.prodNo})}">
+                <div class="thumb">
+                    <img th:src="|@{/}thumb/${product.prodCate1}/${product.prodCate2}/${product.thumb2}|" alt="t1">
+                </div>
+                <h2 th:text="${product.prodName}">상품명</h2>
+                <p th:text="${product.descript}">간단한 상품 설명</p>
+                <div th:if="${product.discount gt 0}" class="org_price">
+                    <del th:text="${#numbers.formatInteger(product.price, 1, 'COMMA')}">30,000</del>
+                    <span th:text="${product.discount + '%'}">10%</span>
+                </div>
+                <div class="dis_price">
+                    <ins th:text="${#numbers.formatInteger(product.disPrice, 1, 'COMMA')}">27,000</ins>
+                    <span th:if="${product.delivery eq 0}" class="free">무료배송</span>
+                    <span th:if="${product.delivery gt 0}">배송비 [[${product.delivery}]] 원</span>
+                </div>
+            </a>
+        </article>
+    </section>
+
+    <section th:fragment="recommend(recommends)" class="recommend">
+        <h3><span>추천상품</span></h3>
+        <article th:each="product:${recommends}">
+            <a th:href="@{/product/view(cate1 = ${product.prodCate1}, cate2 = ${product.prodCate2}, prodNo = ${product.prodNo})}">
+                <div class="thumb">
+                    <img th:src="|@{/}thumb/${product.prodCate1}/${product.prodCate2}/${product.thumb2}|" alt="t1">
+                </div>
+                <h2 th:text="${product.prodName}">상품명</h2>
+                <p th:text="${product.descript}">간단한 상품 설명</p>
+                <div th:if="${product.discount gt 0}" class="org_price">
+                    <del th:text="${#numbers.formatInteger(product.price, 1, 'COMMA')}">30,000</del>
+                    <span th:text="${product.discount + '%'}">10%</span>
+                </div>
+                <div class="dis_price">
+                    <ins th:text="${#numbers.formatInteger(product.disPrice, 1, 'COMMA')}">27,000</ins>
+                    <span th:if="${product.delivery eq 0}" class="free">무료배송</span>
+                    <span th:if="${product.delivery gt 0}">배송비 [[${product.delivery}]] 원</span>
+                </div>
+            </a>
+        </article>
+    </section>
+
+    <section th:fragment="new(news)" class="new">
+        <h3><span>최신상품</span></h3>
+        <article th:each="product:${news}">
+            <a th:href="@{/product/view(cate1 = ${product.prodCate1}, cate2 = ${product.prodCate2}, prodNo = ${product.prodNo})}">
+                <div class="thumb">
+                    <img th:src="|@{/}thumb/${product.prodCate1}/${product.prodCate2}/${product.thumb2}|" alt="t1">
+                </div>
+                <h2 th:text="${product.prodName}">상품명</h2>
+                <p th:text="${product.descript}">간단한 상품 설명</p>
+                <div th:if="${product.discount gt 0}" class="org_price">
+                    <del th:text="${#numbers.formatInteger(product.price, 1, 'COMMA')}">30,000</del>
+                    <span th:text="${product.discount + '%'}">10%</span>
+                </div>
+                <div class="dis_price">
+                    <ins th:text="${#numbers.formatInteger(product.disPrice, 1, 'COMMA')}">27,000</ins>
+                    <span th:if="${product.delivery eq 0}" class="free">무료배송</span>
+                    <span th:if="${product.delivery gt 0}">배송비 [[${product.delivery}]] 원</span>
+                </div>
+            </a>
+        </article>
+    </section>
+
+    <section th:fragment="discount(discounts)" class="discount">
+        <h3><span>할인상품</span></h3>
+        <article th:each="product:${discounts}">
+            <a th:href="@{/product/view(cate1 = ${product.prodCate1}, cate2 = ${product.prodCate2}, prodNo = ${product.prodNo})}">
+                <div class="thumb">
+                    <img th:src="|@{/}thumb/${product.prodCate1}/${product.prodCate2}/${product.thumb2}|" alt="t1">
+                </div>
+                <h2 th:text="${product.prodName}">상품명</h2>
+                <p th:text="${product.descript}">간단한 상품 설명</p>
+                <div th:if="${product.discount gt 0}" class="org_price">
+                    <del th:text="${#numbers.formatInteger(product.price, 1, 'COMMA')}">30,000</del>
+                    <span th:text="${product.discount + '%'}">10%</span>
+                </div>
+                <div class="dis_price">
+                    <ins th:text="${#numbers.formatInteger(product.disPrice, 1, 'COMMA')}">27,000</ins>
+                    <span th:if="${product.delivery eq 0}" class="free">무료배송</span>
+                    <span th:if="${product.delivery gt 0}">배송비 [[${product.delivery}]] 원</span>
+                </div>
+            </a>
+        </article>
+
+    </section>
+
+    <!-- 2023/02/24 // 이해빈 상단이동 fragment -->
+    <th:block th:fragment="scrollToTop">
+        <button type="button" id="top">상단이동</button>
+        <script>
+            $('#top').click(function(){
+                window.scrollTo({top: 0, behavior: "smooth"});
+            });
+        </script>
+    </th:block>
+
+
+</body>
+</html>

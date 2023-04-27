@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="~{fragment/head_fragment::basicHead}"></th:block>
+    <th:block th:replace="~{fragment/head_fragment::adminHead}"></th:block>
+</head>
+<body>
+    <div id="admin-wrapper">
+
+        <header th:replace="~{fragment/header_fragment::adminHeader}"></header>
+
+        <main>
+
+            <aside th:replace="~{fragment/aside_fragment::adminAside}"></aside>
+
+			<section id="admin-product-list">
+
+				<nav th:replace="~{fragment/admin_cs_fragment::adminCsNav(cate = ${cate}, title = '목록')}"></nav>
+
+				<!-- 메인 콘텐츠 -->
+				<section th:replace="~{fragment/admin_cs_fragment::${cate + 'List'}(data = ${data}, cate = ${cate})}"></section>
+
+			</section>
+		</main>
+
+        <footer th:replace="~{fragment/footer_fragment::adminFooter}"></footer>
+
+    </div>
+</body>
+</html>

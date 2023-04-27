@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 2023/02/13 // 심규영 // 관리자 고객센터 xml 생성 -->
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kmarket.dao.admin.AdminCsDAO">
+    <!-- create -->
+    <!-- 2023/02/16 // 심규영 // 관리자 고객센터 글 작성 -->
+    <insert id="createCsArticle" parameterType="hashmap">
+        INSERT INTO ${table} SET
+            ${cate}Title    = #{title},
+            ${cate}Content  = #{content},
+            ${cate}Regip    = #{regip},
+            ${cate}Rdate    = NOW(),
+            <if test="cate == 'faq'">
+            faqCate1        = #{cate1},
+            faqCate2        = #{cate2}
+            </if>
+            <if test="cate == 'notice'">
+            noticeCate      = #{type}
+            </if>
+            ;
+    </insert>
+
+    <!-- read -->
+    <!-- 2023/02/16 // 심규영 // 관리자 고객센터 글 보기 -->
+    <select id="selectCsArticle" parameterType="hashmap" resultType="kr.co.kmarket.vo.AdminCsVo">
+        SELECT
+            *
+
+        <if test="cate == 'qna' || cate == 'faq'">
+            , (SELECT `cate1Name` FROM `km_cs_cate1` AS b WHERE b.`cate1` = a.${c1Name} ) AS c1Name
+            , (SELECT `cate2Name` FROM `km_cs_cate2` AS c WHERE c.`cate1` = a.${c1Name} AND c.`cate2` = a.${c2Name}) AS c2Name
+        </if>
+
+        FROM ${table} AS a
+        WHERE ${typeNo} = #{no};
+    </select>
+
+    <!-- 2023/02/15 // 심규영 // 관리자 고객센터 게시물 read -->
+    <select id="selectCsArticles" parameterType="hashmap" resultType="kr.co.kmarket.vo.AdminCsVo">
+        SELECT
+            *
+            <if test="cate == 'qna' || cate == 'faq'">
+                , (SELECT `cate1Name` FROM `km_cs_cate1` AS b WHERE b.`cate1` = a.${c1Name} ) AS c1Name
+                , (SELECT `cate2Name` FROM `km_cs_cate2` AS c WHERE c.`cate1` = a.${c1Name} AND c.`cate2` = a.${c2Name}) AS c2Name
+            </if>
+            <if test="cate == 'qna'">
+                , (SELECT `name` FROM `km_member` AS d WHERE d.`uid` = a.`uid`) AS qnaName
+            </if>
+        FROM ${table} AS a
+            <if test="cate == 'qna' || cate == 'faq'">
+                WHERE a.${c1Name} LIKE #{cate1} AND a.${c2Name} LIKE #{cate2}
+            </if>
+            <if test="cate == 'notice'">
+                WHERE a.`noticeCate` LIKE #{type}
+            </if>
+        ORDER BY a.${noName} DESC
+        LIMIT ${start}, 10;
+    </select>
+
+    <!-- 2023/02/14 // 심규영 // 관리자 고객센터 게시물 최대 갯수 read -->
+    <select id="selectCountCsArticle" parameterType="hashmap" resultType="int">
+        SELECT COUNT(${noName}) FROM ${table}
+        <if test="cate == 'notice'">
+            WHERE `noticeCate` LIKE #{type}
+        </if>
+        <if test="cate == 'qna'">
+            WHERE `qnaCate1` LIKE #{cate1} AND `qnaCate2` LIKE #{cate2}
+        </if>
+        <if test="cate == 'faq'">
+            WHERE `faqCate1` LIKE #{cate1} AND `faqCate2` LIKE #{cate2}
+        </if>
+        ;
+    </select>
+
+    <!-- 2023/02/17 // 심규영 // 관리자 고객센터 게시물 자신(no)를 제외한 최대 갯수 불러오기 -->
+    <select id="selectCountCsFaqArticleWithNo" parameterType="hashmap" resultType="int">
+        SELECT COUNT(faqNo) FROM km_cs_faq
+        WHERE faqCate1 = ${cate1} AND faqCate2 = ${cate2} AND faqNo != ${no}
+    </select>
+
+    <!-- 2023/02/15 // 심규영 // 고객센터 카테고리1 리스트 불러오기 -->
+    <select id="selectCsCate1s" resultType="kr.co.kmarket.vo.Cs_Cate1VO">
+        SELECT * FROM `km_cs_cate1`;
+    </select>
+
+    <!-- 2023/02/15 // 심규영 // 고객센터 카테고리1값으로 카테고리2 리스트 불러오기 -->
+    <select id="selectCsCate2sWithCate1" resultType="kr.co.kmarket.vo.Cs_Cate2VO">
+        SELECT * FROM `km_cs_cate2` WHERE `cate1` = #{cate1};
+    </select>
+
+    <!-- upload -->
+    <!-- 2023/02/17 // 심규영 // 관리자 고객센터 글 수정 쿼리문 -->
+    <update id="uploadCsArticle" parameterType="hashmap">
+        UPDATE km_cs_${cate} SET
+            ${cate}Title    = #{title},
+            ${cate}Content  = #{content},
+        <if test="cate == 'faq'">
+            faqCate1        = ${cate1},
+            faqCate2        = ${cate2}
+        </if>
+        <if test="cate == 'notice'">
+            noticeCate      = ${type}
+        </if>
+        WHERE ${cate}No = ${no};
+    </update>
+
+    <!-- 2023/02/16 // 심규영 // 관리자 고객센터 문의하기 답변 쿼리문 -->
+    <update id="updateQnaArticle">
+        UPDATE `km_cs_qna` SET
+            `qnaAdminContent` = #{content},
+            `qnaType` = '2'
+        WHERE `qnaNo` = ${no};
+    </update>
+
+    <!-- delete -->
+    <!-- 2023/02/16 // 심규영 // 관리자 고객센터 게시글 삭제 쿼리 -->
+    <delete id="deleteCsArticle" parameterType="hashmap">
+        DELETE FROM ${table}
+        WHERE ${cateNo} = #{no}
+    </delete>
+
+</mapper>

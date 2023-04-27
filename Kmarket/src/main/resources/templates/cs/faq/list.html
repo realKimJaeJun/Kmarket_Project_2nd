@@ -1,0 +1,53 @@
+<!--
+  날짜 : 2023/02/07
+  이름 : 김재준
+  내용 : cs/faq/list.html
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{cs/_cs_header}"></th:block>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script th:src="@{/js/cs/faqList.js}"></script>
+<section id="cs">
+    <div class="faq">
+        <nav>
+            <div>
+                <p>홈<span>></span>자주묻는 질문</p>
+            </div>
+        </nav>
+        <section class="list">
+            <aside>
+                <h2>자주묻는 질문</h2>
+                <th:block th:each="vo2:${vos2}">
+                    <ul>
+                        <li th:classappend="${vo2.cate1} == ${csCate1} ? 'on' : 'off'"><a th:href="@{/cs/faq/list(csCate1=${vo2.cate1})}">[[${vo2.cate1Name}]]</a></li>
+                    </ul>
+                </th:block>
+            </aside>
+            <article>
+                <nav>
+                    <th:block th:each="vo2:${vos2}">
+                        <th:block th:if="${vo2.cate1} == ${csCate1}">
+                            <h1 th:text="${vo2.cate1Name}"></h1>
+                        </th:block>
+                    </th:block>
+                    <h2>가장 자주 묻는 질문입니다.</h2>
+                </nav>
+                <div th:each="vo3: ${vos3}">
+                    <h3 th:text="${vo3.cate2Name}"></h3>
+                    <ul class="faq-list">
+                        <th:block th:each="vo: ${vos}" th:if="${vo.faqCate1 eq vo3.cate1 and vo.faqCate2 eq vo3.cate2}">
+                            <li class="faq-arts">
+                                <a th:href="@{/cs/faq/view(faqNo=${vo.faqNo},faqCate1=${vo.faqCate1})}">
+                                    <span>Q.</span>
+                                    [[${vo.faqTitle}]]
+                                </a>
+                            </li>
+                        </th:block>
+                        <li class="more"><a href="#">더보기</a></li>
+                    </ul>
+                </div>
+            </article>
+        </section>
+    </div>
+</section>
+<th:block th:replace="~{cs/_cs_footer}"/>

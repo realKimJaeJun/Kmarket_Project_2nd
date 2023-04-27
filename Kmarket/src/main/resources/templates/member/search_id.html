@@ -1,0 +1,41 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<th:block th:replace="~{member/_header}"></th:block>
+<script>
+function fb() {
+
+if ($("#name").val() == null || $("#name").val() == "") {
+alert("이름을 입력해주세요.");
+$("#name").focus();
+return false;
+}
+
+if (confirm("아이디를 찾으시겠습니까?")) {
+$('#searchid').submit();
+return false;
+}
+}
+</script>
+    <main id="member">
+        <div class="login">
+            <nav>
+                <h1>아이디찾기</h1>
+            </nav>
+            <form id="searchid" th:action="@{/member/search_id_Result}" method="post">
+                <table border="0">
+                    <tr>
+                        <td>이름</td>
+                        <td><input type="text" name="name" id="name" placeholder="이름 입력"></td>
+                    </tr>
+                </table>
+                <input type="button" value="ok" id="ok" class="ok" onclick="fb()"/>
+                <span>
+                    <a th:href="@{/member/login}">로그인</a>
+                    <a th:href="@{/member/search_pw}">비밀번호 찾기</a>
+                    <a th:href="@{/member/join}">회원가입</a>
+                    <a th:href="@{/member/login}">취소</a>
+                </span>
+            </form>
+        </div>
+    </main>
+<th:block th:replace="~{member/_footer}"></th:block>

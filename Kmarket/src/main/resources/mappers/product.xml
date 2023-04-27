@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kmarket.dao.ProductDAO">
+    <select id="getCateName" resultType="kr.co.kmarket.vo.product_cate2VO">
+        SELECT a.c1Name, b.c2Name FROM `km_product_cate1` AS a
+        JOIN `km_product_cate2` AS b
+        ON a.cate1 = b.cate1 WHERE b.cate1=#{cate1}
+
+        <if test="cate2 != 0">
+            AND b.cate2= #{cate2};
+        </if>
+        <if test="cate2 == 0">
+            AND b.cate2= 10;
+        </if>
+
+    </select>
+    <select id="getCountTotal" resultType="int">
+        SELECT COUNT(`prodNo`) FROM `km_product` WHERE
+        <if test="cate1 != 0">
+            `prodCate1`=#{cate1}
+        </if>
+
+        <if test="cate2 != 0">
+            AND `prodCate2`=#{cate2}
+        </if>
+
+        <if test="search != null">
+            AND `prodName` LIKE '%${search}%'
+        </if>
+    </select>
+
+    <select id="getCountTotalForSearch" resultType="int">
+        SELECT COUNT(`prodNo`) FROM `km_product` WHERE  `prodName` LIKE '%${keyword}%'
+    </select>
+
+    <select id="getCountTotalForSearch2" parameterType="kr.co.kmarket.dto.SearchDTO" resultType="int">
+
+        select count(`prodNo`) from (
+            select * from `km_product`
+            where `prodName` like concat('%', #{keyword}, '%')
+        ) as a
+
+        <where>
+            (
+            <foreach collection="keywords.split(' ')" item="key" separator=" ">
+                <if test="chk1">
+                    `prodName` like concat('%', #{key}, '%') or
+                </if>
+                <if test="chk2">
+                    `descript` like concat('%', #{key}, '%') or
+                </if>
+
+            </foreach>
+            prodName like ''
+            )
+            <if test="chk3">
+                and `price` * (1-`discount`/100) >= ${min}
+                <if test="max != ''">
+                    and `price` * (1-`discount`/100) &lt; ${max}
+                </if>
+
+            </if>
+        </where>
+;
+    </select>
+
+    <select id="selectProducts" resultType="kr.co.kmarket.vo.productVO">
+        SELECT * FROM `km_product` WHERE
+
+        <if test="cate1 != 0">
+            `prodCate1`=#{cate1}
+        </if>
+
+        <if test="cate2 != 0">
+            AND `prodCate2`=#{cate2}
+        </if>
+
+        <if test="search != null">
+            AND `prodName` LIKE '%${search}%'
+        </if>
+
+        <if test="sort == 'sold'">
+            ORDER BY `sold` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'lowprice'">
+            ORDER BY `price` ASC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'highprice'">
+            ORDER BY `price` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'score'">
+            ORDER BY `score` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'review'">
+            ORDER BY `review` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'rdate'">
+            ORDER BY `rdate` DESC LIMIT #{start}, 10;
+        </if>
+
+    </select>
+
+    <select id="selectProductsForSearch" resultType="kr.co.kmarket.vo.productVO">
+        SELECT * FROM `km_product` WHERE `prodName` LIKE '%${keyword}%'
+
+        <if test="sort == 'sold'">
+            ORDER BY `sold` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'lowprice'">
+            ORDER BY `price` ASC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'highprice'">
+            ORDER BY `price` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'score'">
+            ORDER BY `score` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'review'">
+            ORDER BY `review` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'rdate'">
+            ORDER BY `rdate` DESC LIMIT #{start}, 10;
+        </if>
+
+    </select>
+
+
+    <select id="selectProductsForSearch2" parameterType="kr.co.kmarket.dto.SearchDTO" resultType="kr.co.kmarket.vo.productVO">
+        select * from (
+            select * from `km_product`
+            where `prodName` like concat('%', #{dto.keyword}, '%')
+        ) as a
+
+        <where>
+            (
+            <foreach collection="dto.keywords.split(' ')" item="key" separator=" ">
+                <if test="dto.chk1">
+                    `prodName` like concat('%', #{key}, '%') or
+                </if>
+                <if test="dto.chk2">
+                    `descript` like concat('%', #{key}, '%') or
+                </if>
+
+            </foreach>
+            prodName like ''
+            )
+            <if test="dto.chk3">
+                and `price` * (1-`discount`/100) >= #{dto.min}
+                <if test="dto.max != ''">
+                    and `price` * (1-`discount`/100) &lt; #{dto.max}
+                </if>
+
+            </if>
+        </where>
+
+        <if test="sort == 'sold'">
+            ORDER BY `sold` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'lowprice'">
+            ORDER BY `price` ASC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'highprice'">
+            ORDER BY `price` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'score'">
+            ORDER BY `score` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'review'">
+            ORDER BY `review` DESC LIMIT #{start}, 10;
+        </if>
+
+        <if test="sort == 'rdate'">
+            ORDER BY `rdate` DESC LIMIT #{start}, 10;
+        </if>
+
+    </select>
+
+
+    <select id="selectProduct" resultType="kr.co.kmarket.vo.productVO">
+        select * from `km_product` where `prodNo`=#{prodNo};
+    </select>
+
+    <select id="selectCarts" resultType="kr.co.kmarket.dto.CartDTO">
+        SELECT a.*, b.prodCate1, b.prodCate2, b.prodName, b.thumb1, b.descript FROM `km_product_cart` AS a
+        JOIN `km_product` AS b
+        ON a.prodNo = b.prodNo
+        WHERE a.`uid`=#{uid};
+    </select>
+
+    <select id="getCarts" parameterType="java.util.Map" resultType="kr.co.kmarket.dto.CartDTO">
+        SELECT a.*, b.prodCate1, b.prodCate2, b.prodName, b.thumb1, b.descript FROM `km_product_cart` AS a
+        JOIN `km_product` AS b
+        ON a.prodNo = b.prodNo
+        WHERE `cartNo` IN
+        <foreach collection="checkboxArr" item="cartNo" open="(" separator="," close=")">
+            #{cartNo}
+        </foreach>
+    </select>
+
+    <insert id="addCart">
+        INSERT INTO `km_product_cart`(`uid`, `prodNo`, `count`, `price`, `discount`, `point`, `delivery`, `total`, `rdate`)
+        VALUES(#{uid}, #{prodNo}, #{count}, #{price}, #{discount}, #{point}, #{delivery}, #{total}, NOW());
+    </insert>
+
+    <update id="updateProductHit">
+        UPDATE `km_product` SET `hit` = `hit`+ 1 WHERE `prodNo`=#{prodNo};
+    </update>
+
+    <delete id="deleteCarts" parameterType="java.util.Map">
+
+        DELETE FROM `km_product_cart`
+        WHERE `cartNo` IN
+        <foreach collection="checkboxArr" item="cartNo" open="(" separator="," close=")">
+            #{cartNo}
+        </foreach>
+    </delete>
+
+    <update id="updatePoint" parameterType="map">
+        UPDATE `km_member`
+        SET
+        `point` = `point`- #{usedPoint}
+        WHERE `uid`= #{ordUid};
+    </update>
+
+    <insert id="updateOrder" parameterType="map" keyProperty="ordNo" useGeneratedKeys="true">
+        INSERT INTO `km_product_order`
+        SET
+            `ordUid`        = #{ordUid},
+            `ordCount`      = #{ordCount},
+            `ordPrice`      = #{ordPrice},
+            `ordDiscount`   = #{ordDiscount},
+            `ordDelivery`   = #{ordDelivery},
+            `ordTotPrice`   = #{ordTotPrice},
+            `savePoint`     = #{savePoint},
+            `usedPoint`     = #{usedPoint},
+            `recipName`     = #{recipName},
+            `recipHp`       = #{recipHp},
+            `recipZip`      = #{recipZip},
+            `recipAddr1`    = #{recipAddr1},
+            `recipAddr2`    = #{recipAddr2},
+            `ordPayment`    = #{ordPayment},
+            `ordComplete`   = #{ordComplete},
+            `ordDate`       = NOW();
+    </insert>
+
+    <insert id="insertOrderItem">
+        INSERT INTO `km_product_order_item` (`ordNo`, `prodNo`, `count`, `price`, `discount`, `point`, `delivery`, `total`)
+        SELECT #{ordNo}, `prodNo`, `count`, `price`, `discount`, `point`, `delivery`, `total` FROM `km_product_cart` AS a  WHERE a.`cartNo` = #{cartNo};
+    </insert>
+
+    <insert id="insertOrderItem2" parameterType="map">
+        INSERT INTO `km_product_order_item`
+        (`ordNo`, `prodNo`, `count`, `price`, `discount`, `point`, `delivery`, `total`)
+        SELECT #{ordNo}, #{prodNo}, #{ordCount}, `price`, `discount`, `point`, `delivery`, #{ordTotPrice}
+        FROM `km_product` as a
+        WHERE `prodNo`= #{prodNo};
+    </insert>
+
+    <delete id="deleteCart">
+        DELETE FROM `km_product_cart` WHERE `cartNo` = #{cartNo};
+    </delete>
+
+    <select id="selectOrder" resultType="kr.co.kmarket.vo.product_orderVO">
+        SELECT a.*, b.name, b.hp FROM `km_product_order` AS a
+        JOIN `km_member` AS b
+        ON a.ordUid = b.uid
+        WHERE `ordNo` = #{ordNo};
+    </select>
+
+    <select id="selectOrderItems" resultType="kr.co.kmarket.vo.product_order_itemVO">
+        SELECT a.*, b.prodCate1, b.prodCate2, b.prodName, b.thumb1, b.descript FROM `km_product_order_item` AS a
+        JOIN `km_product` AS b
+        ON a.prodNo = b.prodNo
+        WHERE `ordNo` = #{ordNo};
+    </select>
+    
+    <select id="selectReviews" resultType="kr.co.kmarket.vo.product_reviewVO">
+        SELECT * FROM `km_product_review` WHERE `prodNo`= #{prodNo}
+        ORDER BY `revNo` DESC LIMIT #{start},5;
+    </select>
+
+    <select id="getCountTotalForReview" resultType="int">
+        SELECT COUNT(`revNo`) FROM `km_product_review` WHERE `prodNo` = #{prodNo};
+    </select>
+
+    <insert id="insertUsedPoint" parameterType="map">
+        INSERT INTO `km_member_point` SET
+        `uid`       = #{ordUid},
+        `ordNo`     = #{ordNo},
+        `point`     = -#{usedPoint},
+        `pointDate` = NOW()
+    </insert>
+    <insert id="insertSavePoint" parameterType="map">
+        INSERT INTO `km_member_point` SET
+        `uid`       = #{ordUid},
+        `ordNo`     = #{ordNo},
+        `point`     = #{savePoint},
+        `pointDate` = NOW()
+    </insert>
+
+</mapper>

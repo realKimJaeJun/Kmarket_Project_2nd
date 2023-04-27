@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{fragment/head_fragment::termsPolicyHead}"></th:block>
+<body>
+    <div id="wrapper">
+        <th:block th:replace="~{fragment/header_fragment::mainHeader}"></th:block>
+        <main id="termsPolicy">
+            <th:block th:replace="~{fragment/aside_fragment::productAside}"></th:block>
+            <section class="buyer">
+                <nav>
+                    <h1>KMARKET 서비스 이용약관</h1>
+                    <ul>
+                        <li th:class="${type == 10 ? 'on':''}"><a th:href="@{/termsPolicy/policy?type=10}">구매회원 약관</a></li>
+                        <li th:class="${type == 11 ? 'on':''}"><a th:href="@{/termsPolicy/policy?type=11}">판매회원 약관</a></li>
+                        <li th:class="${type == 14 ? 'on':''}"><a th:href="@{/termsPolicy/policy?type=14}">전자금융거래 약관</a></li>
+                        <li th:class="${type == 13 ? 'on':''}"><a th:href="@{/termsPolicy/policy?type=13}">위치정보이용 약관</a></li>
+                        <li th:class="${type == 12 ? 'on':''}"><a th:href="@{/termsPolicy/policy?type=12}">개인정보수집 방침</a></li>
+                    </ul>
+                </nav>
+                <article>
+                    <h2>[[${typeName}]]</h2>
+                    <th:block th:each="num : ${#numbers.sequence(1, #maps.size(policys))}">
+                        <span class="tit" th:text="${policys.get(num)[0].title}"></span>
+                            <th:block th:each="policy:${policys.get(num)}">
+                            <p>
+                                <span class="tit">[[${policy.subTitle}]]</span>
+                                <span class="content">[[${policy.content}]]</span>
+                            </p>
+                        </th:block>
+                    </th:block>
+
+
+                </article>
+            </section>
+
+        </main>
+        <th:block th:replace="~{fragment/footer_fragment::mainFooter}"></th:block>
+        <button type="button" id="top">상단이동</button>
+    </div>
+</body>
+</html>

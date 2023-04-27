@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <th:block th:replace="~{fragment/head_fragment::basicHead}"></th:block>
+    <th:block th:replace="~{fragment/head_fragment::adminHead}"></th:block>
+    <script th:src="@{/js/admin/productRegister.js}"></script>
+</head>
+<body>
+    <div id="admin-wrapper">
+        <header th:replace="~{fragment/header_fragment::adminHeader}"></header>
+        <main>
+            <aside th:replace="~{fragment/aside_fragment::adminAside}"></aside>
+            <section id="admin-product-register">
+                <nav>
+                    <h3>상품등록</h3>
+                    <p>
+                        HOME > 상품관리 > <strong>상품등록</strong>
+                    </p>
+                </nav>
+                <!-- 상품등록 컨텐츠 시작 -->
+                <article>
+                    <form th:replace="~{fragment/admin_fragment::adminRegisterForm(cate1s = ${cate1s})}"></form>
+                </article>
+
+                <p class="ico alert">
+                    <strong>Warning!</strong>
+                    전자상거래 등에서의 상품 등의 정보제공에 관한 고시에 따라 총 35개 상품군에 대해 상품 특성 등을 양식에 따라 입력할 수 있습니다.
+                </p>
+
+            </section>
+        </main>
+        <footer th:replace="~{fragment/footer_fragment::adminFooter}"></footer>
+    </div>
+</body>
+</html>

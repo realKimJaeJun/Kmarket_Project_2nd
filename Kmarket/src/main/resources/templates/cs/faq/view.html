@@ -1,0 +1,45 @@
+<!--
+  날짜 : 2023/02/07
+  이름 : 김재준
+  내용 : cs/faq/view.html
+-->
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{cs/_cs_header}"></th:block>
+<section id="cs">
+    <div class="faq">
+        <nav>
+            <div>
+                <p>홈<span>></span>자주묻는 질문</p>
+            </div>
+        </nav>
+        <section class="view">
+            <aside>
+                <h2>자주묻는 질문</h2>
+                <ul th:each="vo2:${vos2}">
+                    <li th:classappend="${vo2.cate1} == ${csCate1} ? 'on' : 'off'"><a th:href="@{/cs/faq/list(csCate1=${vo2.cate1})}">[[${vo2.cate1Name}]]</a></li>
+                </ul>
+            </aside>
+            <article>
+                <nav>
+                    <h2 class="title"><span>Q.</span>[[${vo.faqTitle}]]</a></h2>
+                </nav>
+
+                <div class="content">
+                    <p>
+                        [[${vo.faqContent}]]
+                    </p>
+                    <p>
+                        ※ 피싱 관련 피해신고<br /><br />
+                        ▶ 경찰청 사이버수사국 (국번없이)182 :
+                        http://cyberbureau.police.go.kr<br />
+                        ▶ KISA 인터넷침해대응센터 (국번없이)118 :
+                        http://www.krcert.or.kr<br />
+                        감사합니다.<br />
+                    </p>
+                </div>
+                <a th:href="@{/cs/faq/list(csCate1=${csCate1})}" class="btnList">목록보기</a>
+            </article>
+        </section>
+    </div>
+</section>
+<th:block th:replace="~{cs/_cs_footer}"/>

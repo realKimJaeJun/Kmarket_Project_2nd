@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>케이마켓::대한민국 1등 온라인 쇼핑몰</title>
+    <th:block th:replace="~{fragment/head_fragment::basicHead}"></th:block>
+    <th:block th:replace="~{fragment/head_fragment::mainHead}"></th:block>
+</head>
+<body>
+<div id="wrapper">
+    <th:block th:replace="~{fragment/header_fragment::mainHeader}"></th:block>
+    <main>
+        <!-- 카테고리/베스트 상품 영역 -->
+        <th:block th:replace="~{fragment/aside_fragment::mainAside(cate1s = ${cate1s}, cate2s = ${cate2s}, bests = ${bests})}"></th:block>
+        <section>
+            <!-- 슬라이더 영역 -->
+            <th:block th:replace="~{fragment/main_fragment::slider}"></th:block>
+            <!-- 히트 상품 영역 -->
+            <th:block th:replace="~{fragment/main_fragment::hit(hits = ${hits})}"></th:block>
+            <!-- 추천상품 영역 -->
+            <th:block th:replace="~{fragment/main_fragment::recommend(recommends = ${recommends})}"></th:block>
+            <!-- 최신상품 영역 -->
+            <th:block th:replace="~{fragment/main_fragment::new(news = ${news})}"></th:block>
+            <!-- 할인상품 영역 -->
+            <th:block th:replace="~{fragment/main_fragment::discount(discounts = ${discounts})}"></th:block>
+        </section>
+    </main>
+    <th:block th:replace="~{fragment/footer_fragment::mainFooter}"></th:block>
+    <th:block th:replace="~{fragment/main_fragment::scrollToTop}"></th:block>
+</div>
+</body>
+</html>

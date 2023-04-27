@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kmarket.dao.MemberDAO">
+    <select id="selectTerms" resultType="kr.co.kmarket.vo.member_termsVO">
+        select * from `km_member_terms`;
+    </select>
+    <insert id="insertMember">
+        insert into `km_member` set
+        `uid`=#{uid},
+        `pass`=#{pass},
+        `name`=#{name},
+        `gender`=#{gender},
+        `email`=#{email},
+        `type`=1,
+        `hp`=#{hp},
+        `zip`=#{zip},
+        `addr1`=#{addr1},
+        `addr2`=#{addr2},
+        `regip`=#{regip},
+        `rdate`=NOW();
+    </insert>
+    <insert id="insertSellerMember">
+        insert into `km_member` set
+        `uid`=#{uid},
+        `pass`=#{pass},
+        `company`=#{company},
+        `ceo`=#{ceo},
+        `bizRegNum`=#{bizRegNum},
+        `comRegNum`=#{comRegNum},
+        `tel`=#{tel},
+        `fax`=#{fax},
+        `email`=#{email},
+        `type`=2,
+        `zip`=#{zip},
+        `addr1`=#{addr1},
+        `addr2`=#{addr2},
+        `manager`=#{manager},
+        `managerHp`=#{managerHp},
+        `regip`=#{regip},
+        `rdate`=NOW();
+    </insert>
+    <!--아이디 찾기-->
+    <!----><select id="search_id" resultType="String" >
+        SELECT `uid` FROM `km_member` WHERE `name`=#{name};
+    </select>
+    <!--비밀번호 찾기-->
+    <update id="search_pw">
+        update `km_member` set `pw` = #{pw} where `uid` = #{uid};
+    </update>
+
+    <!-- 2023/02/13 이해빈 회원 정보 가져오기 -->
+    <select id="selectMember" resultType="kr.co.kmarket.vo.memberVO">
+        select * from `km_member` where `uid`=#{uid};
+    </select>
+
+</mapper>

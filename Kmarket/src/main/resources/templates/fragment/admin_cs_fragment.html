@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 2023/02/09 // 심규영 // 표지 -->
+    <nav th:fragment="adminCsNav(cate, title)">
+        <th:block th:switch="${cate}">
+            <th:block th:case="faq">
+                <h3>자주묻는질문 [[${title}]]</h3>
+                <p>
+                    HOME > 고객센터 > <strong>자주묻는질문</strong>
+                </p>
+            </th:block>
+            <th:block th:case="qna">
+                <h3>문의하기 [[${title}]]</h3>
+                <p>
+                    HOME > 고객센터 > <strong>문의하기</strong>
+                </p>
+            </th:block>
+            <th:block th:case="notice">
+                <h3>공지사항 [[${title}]]</h3>
+                <p>
+                    HOME > 고객센터 > <strong>공지사항</strong>
+                </p>
+            </th:block>
+        </th:block>
+    </nav>
+
+    <!-- 2023/02/09 // 심규영 // 자주하는 질문 목록 -->
+    <section th:fragment="faqList(data, cate)">
+
+        <div style="display: inline-block;">
+            <select name="cate1" onchange="cate1Change()">
+                <option value="">1차 선택</option>
+
+                <th:block th:each="cate1VO:${data.cate1VOs}">
+                    <option th:value="${cate1VO.cate1}" th:selected="${cate1VO.cate1} eq ${#numbers.formatInteger(data.etcText.cate1,1)}">[[${cate1VO.cate1Name}]]</option>
+                </th:block>
+
+            </select>
+
+        </div>
+        <div style="display: inline-block;">
+            <select name="cate2" onchange="cate2Change()">
+                <option value="">2차 선택</option>
+
+                <th:block th:if="${#maps.containsKey(data, 'cate2VOs')}">
+                    <th:block th:each="cate2VO:${data.cate2VOs}">
+                        <option th:value="${cate2VO.cate2}" th:selected="${cate2VO.cate2} eq ${#numbers.formatInteger(data.etcText.cate2,1)}">[[${cate2VO.cate2Name}]]</option>
+                    </th:block>
+                </th:block>
+
+            </select>
+        </div>
+
+
+        <table id="listTable">
+            <tr>
+                <th style="width: 2%;"><input type="checkbox" id="cbx_chkAll"/></th>
+                <th style="width: 7%;">번호</th>
+                <th style="width: 7%;">1차유형</th>
+                <th style="width: 7%;">2차유형</th>
+                <th style="width: auto;">제목</th>
+                <th style="width: 7%;">조회</th>
+                <th style="width: 9%;">날짜</th>
+                <th style="width: 9%;">관리</th>
+            </tr>
+
+
+            <tr th:each="article:${data.articles}">
+                <td><input type="checkbox" name="상품코드"/></td>
+                <td th:text="${article.faqNo}">213213</td>
+                <td th:text="${article.c1Name}">cate1</td>
+                <td th:text="${article.c2Name}" style="text-align: center;">cate2</td>
+                <td><a th:text="${article.faqTitle}"
+                       th:href="|@{/}admin/cs/${cate}/view?no=${article.faqNo}&pg=${data.etcText.pg}&cate1=${article.faqCate1}&cate2=${article.faqCate2}|">제목</a></td>
+                <td th:text="${article.faqHit}">12323</td>
+                <td th:text="${article.faqRdate}">2023-02-08</td>
+                <td>
+                    <a href="#" th:onclick="articleDelete('faq',[[${article.faqNo}]], 'list')">[삭제]</a>
+                    <a th:href="|@{/}admin/cs/${cate}/modify?no=${article.faqNo}|">[수정]</a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.size(data.articles) lt 1}">
+                <td colspan="7">게시물이 없습니다.</td>
+            </tr>
+
+
+        </table>
+
+        <input type="button" value="선택삭제" onclick="articlesDelete('faq')">
+        <a th:href="|@{/}admin/cs/${cate}/write|" class="w-btn w-btn-green">작성하기</a>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 공지사항 목록 -->
+    <section th:fragment="noticeList(data, cate)">
+        <div>
+            <select name="type" class="w-btn-outline w-btn-indigo-outline" onchange="typeChange()">
+                <option value="">유형 선택</option>
+                <option value="10" th:selected="${data.etcText.type eq '10'}">고객서비스</option>
+                <option value="11" th:selected="${data.etcText.type eq '11'}">안전거래</option>
+                <option value="12" th:selected="${data.etcText.type eq '12'}">위해상품</option>
+                <option value="13" th:selected="${data.etcText.type eq '13'}">이벤트상품</option>
+            </select>
+
+        </div>
+        <table class="VOStableList">
+            <tr>
+                <th style="width: 5%;"><input type="checkbox" id="cbx_chkAll"/></th>
+                <th style="width: 5%;">번호</th>
+                <th style="width: 11%;">유형</th>
+                <th style="width: auto;">제목</th>
+                <th style="width: 5%;">조회</th>
+                <th style="width: 9%;">날짜</th>
+                <th style="width: 5%;">관리</th>
+            </tr>
+
+            <tr th:each="article:${data.articles}">
+                <td><input type="checkbox" name="상품코드"/></td>
+                <td th:text="${article.noticeNo}">1230123</td>
+
+                <td th:if="${article.noticeCate eq 10}">고객서비스</td>
+                <td th:if="${article.noticeCate eq 11}">안전거래</td>
+                <td th:if="${article.noticeCate eq 12}">위해상품</td>
+                <td th:if="${article.noticeCate eq 13}">이벤트상품</td>
+
+                <td><a th:text="${article.noticeTitle}"
+                       th:href="|@{/}admin/cs/${cate}/view?no=${article.noticeNo}&type=${article.noticeCate}&pg=${data.paging.currentPage}|">공지사항 제목</a></td>
+                <td th:text="${article.noticeHit}">32132</td>
+                <td th:text="${article.noticeRdate}">23-02-09</td>
+                <td>
+                    <a href="#" class="deleteSingle" th:onclick="articleDelete('notice',[[${article.noticeNo}]], 'list')">[삭제]</a>
+                    <a th:href="|@{/}admin/cs/${cate}/modify?no=${article.noticeNo}|">[수정]</a>
+                </td>
+            </tr>
+
+            <tr th:if="${#lists.size(data.articles) lt 1}">
+                <td colspan="6">게시물이 없습니다.</td>
+            </tr>
+
+        </table>
+
+        <div class="btn2ro">
+            <a href="#" class="deleteAll" onclick="articlesDelete('notice')">선택삭제</a>
+            <a th:href="|@{/}admin/cs/${cate}/write|">작성하기</a>
+        </div>
+
+        <div class="paging">
+            <span th:if="${data.paging.groupStart gt 1}" class="prev">
+                <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.paging.groupStart-1}&type=${data.etcText.type}|"><&nbsp;이전</a>
+            </span>
+
+            <span class="num">
+                <th:block th:each="i:${#numbers.sequence(data.paging.groupStart, data.paging.groupEnd)}">
+                    <a th:href="|@{/}admin/cs/${cate}/list?pg=${i}&type=${data.etcText.type}|"
+                       th:classappend="${data.paging.currentPage eq i ? 'on' : ''}" th:text="${i}"></a>
+                </th:block>
+            </span>
+
+            <span th:if="${data.paging.groupEnd lt data.paging.lastPage}" class="next">
+                <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.paging.groupEnd+1}&type=${data.etcText.type}|">다음&nbsp;></a>
+            </span>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 문의하기 목록 -->
+    <section th:fragment="qnaList(data, cate)">
+        <div style="display: inline-block;">
+            <select name="cate1" class="w-btn-outline w-btn-indigo-outline" onchange="cate1Change()">
+                <option value="">1차 선택</option>
+
+                <th:block th:each="cate1VO:${data.cate1VOs}">
+                    <option th:value="${cate1VO.cate1}" th:selected="${cate1VO.cate1} eq ${#numbers.formatInteger(data.etcText.cate1,1)}">[[${cate1VO.cate1Name}]]</option>
+                </th:block>
+
+            </select>
+
+        </div>
+        <div style="display: inline-block;">
+            <select name="cate2" class="w-btn-outline w-btn-indigo-outline" onchange="cate2Change()">
+                <option value="">2차 선택</option>
+
+                <th:block th:if="${#maps.containsKey(data, 'cate2VOs')}">
+                    <th:block th:each="cate2VO:${data.cate2VOs}">
+                        <option th:value="${cate2VO.cate2}" th:selected="${cate2VO.cate2} eq ${#numbers.formatInteger(data.etcText.cate2,1)}">[[${cate2VO.cate2Name}]]</option>
+                    </th:block>
+                </th:block>
+
+            </select>
+        </div>
+
+        <table id="listTable">
+            <tr>
+                <th style="width: 3%;"><input type="checkbox" id="cbx_chkAll"/></th>
+                <th style="width: 3%;">번호</th>
+                <th style="width: 10%;">1차유형</th>
+                <th style="width: 10%;">2차유형</th>
+                <th>제목</th>
+                <th style="width: 10%;">작성자</th>
+                <th style="width: 7%;">작성일</th>
+                <th style="width: 7%;">상태</th>
+            </tr>
+            <tr th:each="article:${data.articles}">
+                <td><input type="checkbox" name="상품코드"/></td>
+                <td th:text="${article.qnaNo}">1231323</td>
+                <td th:text="${article.c1Name}">카테고리1이름</td>
+                <td th:text="${article.c2Name}">카테고리2이름</td>
+
+                <td th:if="${article.qnaType eq 1}">
+                    <a th:text="${article.qnaTitle}"
+                       th:href="|@{/}admin/cs/${cate}/reply?no=${article.qnaNo}&pg=${data.paging.currentPage}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">문의하기 제목</a>
+                </td>
+                <td th:if="${article.qnaType eq 2}">
+                    <a th:text="${article.qnaTitle}"
+                       th:href="|@{/}admin/cs/${cate}/view?no=${article.qnaNo}&pg=${data.paging.currentPage}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">문의하기 제목</a>
+                </td>
+
+                <td th:text="${article.qnaName}">작성자 이름</td>
+                <td th:text="${article.qnaRdate}">23-02-09</td>
+
+                <td th:if="${article.qnaType eq 1}">검토중</td>
+                <td th:if="${article.qnaType eq 2}">답변완료</td>
+            </tr>
+
+            <tr th:if="${#lists.size(data.articles) lt 1}">
+                <td colspan="7">게시물이 없습니다.</td>
+            </tr>
+
+        </table>
+
+        <div class="btn1ro">
+            <a href="#" class="deleteAll" onclick="articlesDelete('qna')">선택삭제</a>
+        </div>
+
+        <div class="paging">
+            <span th:if="${data.paging.groupStart gt 1}" class="prev">
+                <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.paging.groupStart-1}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|"><&nbsp;이전</a>
+            </span>
+
+            <span class="num">
+                <th:block th:each="i:${#numbers.sequence(data.paging.groupStart, data.paging.groupEnd)}">
+                    <a th:href="|@{/}admin/cs/${cate}/list?pg=${i}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|"
+                       th:classappend="${data.paging.currentPage eq i ? 'on' : ''}" th:text="${i}"></a>
+                </th:block>
+            </span>
+
+            <span th:if="${data.paging.groupEnd lt data.paging.lastPage}" class="next">
+                <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.paging.groupEnd+1}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">다음&nbsp;></a>
+            </span>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 자주하는질문 수정 -->
+    <section th:fragment="faqModify(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td>
+                    <select name="cate1" onchange="cate1Change()">
+
+                        <th:block th:each="cate1VO:${data.cate1VOs}">
+                            <option th:value="${cate1VO.cate1}"
+                                    th:text="${cate1VO.cate1Name}"
+                                    th:selected="${cate1VO.cate1 eq data.article.faqCate1}">cate1이름</option>
+                        </th:block>
+
+                    </select>
+
+                    <select name="cate2">
+
+                        <th:block th:each="cate2VO:${data.cate2VOs}">
+                            <option th:value="${cate2VO.cate2}"
+                                    th:text="${cate2VO.cate2Name}"
+                                    th:selected="${cate2VO.cate2 eq data.article.faqCate2}">카테2 이름</option>
+                        </th:block>
+
+                    </select>
+
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    <input type="text" name="title"
+                           placeholder="제목을 입력하세요."
+                           th:value="${data.article.faqTitle}"
+                           style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    <pre style="display: grid; width: 100%;">
+                        <textarea name="content"
+                                  placeholder="내용을 입력하세요."
+                                  style="height: 400px;">[[${data.article.faqContent}]]</textarea>
+                    </pre>
+                </td>
+            </tr>
+        </table>
+        <div class="btn2ro" style="margin-left: 500px;">
+            <a href="#" onclick="goBack(1)">취소하기</a>
+            <a href="#" th:onclick="articleModify('faq', [[${data.article.faqNo}]])">수정하기</a>
+        </div>
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 공지사항 수정 -->
+    <section th:fragment="noticeModify(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td>
+                    <select name="type">
+                        <option value="10" th:selected="${data.article.noticeCate eq 10}">고객서비스</option>
+                        <option value="11" th:selected="${data.article.noticeCate eq 11}">안전거래</option>
+                        <option value="12" th:selected="${data.article.noticeCate eq 12}">위해상품</option>
+                        <option value="13" th:selected="${data.article.noticeCate eq 13}">이벤트상품</option>
+                    </select>
+
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    <input type="text" name="title"
+                           placeholder="제목을 입력하세요."
+                           th:value="${data.article.noticeTitle}"
+                           style="width: 100%;">
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    <pre style="display: grid;">
+                        <textarea name="content"
+                                  placeholder="내용을 입력하세요."
+                                  style="display: block; height: 400px;">[[${data.article.noticeContent}]]</textarea>
+                    </pre>
+                </td>
+            </tr>
+        </table>
+        <div class="btn2ro" style="margin-left: 500px;">
+            <a href="#" onclick="goBack(1)">취소하기</a>
+            <a href="#" th:onclick="articleModify('notice', [[${data.article.noticeNo}]])" class="btnNoticeModify">수정하기</a>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 자주하는질문 보기 -->
+    <section th:fragment="faqView(data, cate)">
+
+        <table>
+            <tr>
+                <td><strong>유형</strong></td>
+                <td>
+                    [[${data.article.c1Name}]] - [[${data.article.c2Name}]]
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    [[${data.article.faqTitle}]]
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    <pre>[[${data.article.faqContent}]]</pre>
+                </td>
+            </tr>
+        </table>
+
+        <div class="aGroup">
+            <a href="#" class="btnDelete" th:onclick="articleDelete('faq',[[${data.article.faqNo}]], 'view')">삭제</a>
+            <a th:href="|@{/}admin/cs/${cate}/modify?no=${data.article.faqNo}&pg=${data.etcText.pg}|">수정</a>
+            <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.etcText.pg}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">목록</a>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 공지사항 보기 -->
+    <section th:fragment="noticeView(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td th:if="${data.article.noticeCate eq 10}">고객서비스</td>
+                <td th:if="${data.article.noticeCate eq 11}">안전거래</td>
+                <td th:if="${data.article.noticeCate eq 12}">위해상품</td>
+                <td th:if="${data.article.noticeCate eq 13}">이벤트상품</td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    [[${data.article.noticeTitle}]]
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    [[${data.article.noticeContent}]]
+                </td>
+            </tr>
+        </table>
+        <div class="btn3ro" style="padding-left: 400px;">
+            <a href="#" class="btnNoticeDelete" th:onclick="articleDelete('notice',[[${data.article.noticeNo}]], 'view')">삭제</a>
+            <a th:href="|@{/}admin/cs/${cate}/modify?no=${data.article.noticeNo}&pg=${data.etcText.pg}|">수정</a>
+            <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.etcText.pg}&type=${data.etcText.type}|">목록</a>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 문의하기 보기 -->
+    <section th:fragment="qnaView(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td>
+                    [[${data.article.c1Name}]] - [[${data.article.c2Name}]]
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    [[${data.article.qnaTitle}]]
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    [[${data.article.qnaContent}]]
+                </td>
+            </tr>
+            <tr>
+                <td>답변</td>
+                <td>
+                    <pre>[[${data.article.qnaAdminContent}]]</pre>
+                </td>
+            </tr>
+        </table>
+        <div class="btn3ro" style="margin-left: 500px;">
+            <a href="#" class="btnNoticeDelete" th:onclick="articleDelete('qna',[[${data.article.qnaNo}]], 'view')">삭제</a>
+            <a th:href="|@{/}admin/cs/${cate}/list?pg=${data.etcText.pg}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">목록</a>
+        </div>
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 자주하는질문 쓰기 -->
+    <section th:fragment="faqWrite(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td>
+                    <select name="cate1" onchange="cate1Change()">
+                        <option value="">1차 선택</option>
+
+                        <th:block th:each="cate1VO:${data.cate1VOs}">
+                            <option th:value="${cate1VO.cate1}">[[${cate1VO.cate1Name}]]</option>
+                        </th:block>
+
+                    </select>
+                    <select name="cate2">
+                        <option value="">2차 선택</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    <input type="text" name="title"
+                           maxlength="255"
+                           placeholder="제목을 입력하세요."
+                           style="width: 80%;">
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    <textarea name="content"
+                              placeholder="내용을 입력하세요."
+                              style="width: 80%; height: 400px;"></textarea>
+                </td>
+            </tr>
+        </table>
+        <div style="margin-left: 500px;">
+            <a th:href="|@{/}admin/cs/${cate}/list|">취소하기</a>
+            <a href="#" onclick="articleWrite('faq')">등록하기</a>
+        </div>
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 공지사항 쓰기 -->
+    <section th:fragment="noticeWrite(data, cate)">
+
+        <table>
+            <tr>
+                <td>유형</td>
+                <td>
+                    <select name="type">
+                        <option value="">유형 선택</option>
+                        <option value="10">고객서비스</option>
+                        <option value="11">안전거래</option>
+                        <option value="12">위해상품</option>
+                        <option value="13">이벤트상품</option>
+                    </select>
+
+                </td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td>
+                    <input type="text" name="title"
+                           maxlength="255"
+                           placeholder="제목을 입력하세요."
+                           style="width: 80%;">
+                </td>
+            </tr>
+            <tr>
+                <td>내용</td>
+                <td>
+                    <textarea name="content"
+                              placeholder="내용을 입력하세요."
+                              style="width: 80%; height: 400px;"></textarea>
+                </td>
+            </tr>
+        </table>
+        <div class="btn2ro" style="margin-left: 500px;">
+            <a th:href="|@{/}admin/cs/${cate}/list|">취소하기</a>
+            <a href="#" onclick="articleWrite('notice')">등록하기</a>
+        </div>
+
+
+    </section>
+
+    <!-- 2023/02/09 // 심규영 // 문의하기 답변 -->
+    <section class="AdminContent" th:fragment="qnaReply(data)">
+        <form action="#" method="post">
+            <table>
+                <tr>
+                    <td><strong>유형</strong></td>
+                    <td>
+                        [[${data.article.c1Name}]] - [[${data.article.c2Name}]]
+                    </td>
+                </tr>
+                <tr>
+                    <td>제목</td>
+                    <td>
+                        [[${data.article.qnaTitle}]]
+                    </td>
+                </tr>
+                <tr>
+                    <td>내용</td>
+                    <td>
+                        [[${data.article.qnaContent}]]
+                    </td>
+                </tr>
+                <tr>
+                    <td>답변</td>
+                    <td>
+                        <textarea
+                            name="AdminContent"
+                            placeholder=""
+                            style="width: 80%; height: 200px;"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <div class="btn3ro" style="margin-left: 400px;">
+                <a href="#" id="delete" th:onclick="articleDelete('qna',[[${data.etcText.no}]], 'reply')">삭제</a>
+                <a href="#" th:onclick="articleReply([[${data.etcText.no}]])">답변등록</a>
+                <a th:href="|@{/}admin/cs/qna/list?pg=${data.etcText.pg}&cate1=${data.etcText.cate1}&cate2=${data.etcText.cate2}|">목록</a>
+            </div>
+        </form>
+    </section>
+</body>
+</html>

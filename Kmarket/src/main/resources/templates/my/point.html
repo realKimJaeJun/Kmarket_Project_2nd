@@ -1,0 +1,87 @@
+<!--
+    날짜: 2023/02/08
+    이름: 이해빈
+    내용: 마이페이지 home html 작업
+-->
+<!-- 2023/02/20 // 심규영 // 마이페이지 헤더,푸터 등등 중복 처리 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>케이마켓::대한민국 1등 온라인 쇼핑몰</title>
+    <th:block th:replace="~{fragment/head_fragment::basicHead}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/my.css}">
+</head>
+<body>
+    <div id="wrapper">
+        <header th:replace="~{fragment/header_fragment::myHeader}"></header>
+        <div id="my">
+            <nav th:replace="~{fragment/my_fragment::my_nav}"></nav>
+
+            <div class="point">
+                <ul th:replace="~{fragment/my_fragment::menu_else}"></ul>
+
+                <section>
+                    <a href="#"><img src="../img/my_banner2.png" alt="패션, 타운 하나로 끝" class="banner"></a>
+                    <article>
+                        <h3>포인트내역</h3>
+
+                        <div class="byDate">
+                            <span class="tit">기간별조회</span>
+                            <ul class="date_3ea">
+                                <li><a th:href="@{/my/point(date='week')}" th:classappend="${date == 'week' ? 'on' : ''}"><em>1</em>주일</a></li>
+                                <li><a th:href="@{/my/point(date='halfMonth')}" th:classappend="${date == 'halfMonth' ? 'on' : ''}"><em>15</em>일</a></li>
+                                <li><a th:href="@{/my/point(date='month')}" th:classappend="${date == 'month' ? 'on' : ''}"><em>1</em>개월</a></li>
+                            </ul>
+                            <ul class="date_5ea">
+                                <li th:each="num, i:${#numbers.sequence(month-4, month)}">
+                                    <th:block th:if="${num <= 0}">
+                                        <a th:href="@{/my/point(date=${monthNames[num+2]})}" th:classappend="${date == monthNames[num+2]} ? 'on' : ''"><em>[[${num+12}]]</em>월</a>
+                                    </th:block>
+                                    <th:block th:if="${num > 0} and ${num > 12}">
+                                        <a th:href="@{/my/point(date=${monthNames[num+2]})}" th:classappend="${date == monthNames[num+2]} ? 'on' : ''"><em>[[${num}]]</em>월</a>
+                                    </th:block>
+                                    <th:block th:if="${num > 0} and ${num <= 12}">
+                                        <a th:href="@{/my/point(date=${monthNames[num+2]})}" th:classappend="${date == monthNames[num+2]} ? 'on' : ''"><em>[[${num}]]</em>월</a>
+                                    </th:block>
+                                </li>
+                            </ul>
+                            <p>
+                                <input type="date" name="begin"><span>~</span><input type="date" name="end">
+                            </p>
+                            <button class="btnConfirm">조회하기</button>
+                        </div>
+
+                        <table border="0">
+                            <tr>
+                                <th>날짜</th>
+                                <th>구분</th>
+                                <th>주문번호</th>                                
+                                <th>적립금액</th>
+                                <th>비고</th>
+                                <th>유효기간</th>
+                            </tr>
+                            <tr th:each="pointVO:${pointVOs}">
+                                <td th:text="${pointVO.pointDateString}"></td>
+
+                                <td th:if="${pointVO.point gt 0}">적립</td>
+                                <td th:if="${pointVO.point lt 0}">사용</td>
+
+                                <td th:text="${pointVO.ordNo}"></td>
+                                <td th:text="${pointVO.point}"></td>
+
+                                <td th:if="${pointVO.point gt 0}">상품 구매 확정</td>
+                                <td th:if="${pointVO.point lt 0}">상품 구매</td>
+
+                                <td th:text="${pointVO.lastDateString}"></td>
+                            </tr>
+                        </table>
+                        <section th:replace="~{fragment/paging_fragment::myPointPaging}"></section>
+                    </article>
+                </section>
+            </div>
+        </div>
+        <th:block th:replace="~{fragment/footer_fragment::mainFooter}"></th:block>
+    </div>    
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!-- 2023/02/21 // 김재준 // 마이페이지 헤더,푸터 등등 중복 처리 -->
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <title>케이마켓::대한민국 1등 온라인 쇼핑몰</title>
+    <th:block th:replace="~{fragment/head_fragment::basicHead}"></th:block>
+    <link rel="stylesheet" th:href="@{/css/my.css}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script th:src="@{/js/my/myQna.js}"></script>
+</head>
+<body>
+<div id="wrapper">
+    <header th:replace="~{fragment/header_fragment::myHeader}"></header>
+    <div id="my">
+        <nav th:replace="~{fragment/my_fragment::my_nav}"></nav>
+
+        <div class="qna">
+            <ul th:replace="~{fragment/my_fragment::menu_else}"></ul>
+
+                <section>
+                    <a href="#"><img src="../img/my_banner2.png" alt="패션, 타운 하나로 끝" class="banner"></a>
+                    <article>
+                        <h3>문의하기</h3>
+
+                        <table border="0">
+                            <tr>
+                                <th>번호</th>
+                                <th>문의채널</th>
+                                <th>문의유형</th>                                
+                                <th>제목</th>
+                                <th>작성일</th>
+                                <th>상태</th>
+                            </tr>
+                            <th:block th:each="arts:${QnaArts}">
+                            <tr>
+                                <td class="no">[[${arts.qnaNo}]]</td>
+                                <td class="channel">고객센터</td>
+                                <td class="type">[[${arts.cate1Name}]]</td>
+                                <td class="tit"><a href="#">[[${arts.qnaTitle}]]</a></td>
+                                <td class="date">[[${arts.qnaRdate}]]</td>
+                                <td class="status" th:if="${arts.qnaType == 1}"><span class="notAnswerYet">검토중</span></td>
+                                <td class="status" th:unless="${arts.qnaType == 1}"><span class="answered">답변완료</span></td>
+                            </tr>
+                            <tr class="answerRow">
+                                <td colspan="6">
+                                    <div class="question">
+                                        <p class="tit">
+                                            [[${arts.qnaTitle}]]
+                                            <span class="date" th:text="${arts.qnaRdate}"></span>
+                                        </p>
+                                        <p class="content">
+                                            [[${arts.qnaContent}]]
+                                        </p>
+                                    </div>
+                                    <div class="answer">
+                                        <p class="tit">
+                                            [[${arts.cate1Name}]] 문의 답변입니다.
+                                            <span class="date" th:text="${arts.qnaRdate}"></span>
+                                        </p>
+                                        <p class="content">
+                                            [[${arts.qnaAdminContent}]]
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                            </th:block>
+                        </table>
+                        <section th:replace="~{fragment/paging_fragment::myQnaPaging}"></section>
+                    </article>
+                </section>
+            </div>
+        </div>
+    <th:block th:replace="~{fragment/footer_fragment::mainFooter}"></th:block>
+    </div>    
+</body>
+</html>

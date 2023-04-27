@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.kmarket.dao.cs.CsQnaDAO">
+
+    <select id="selectQnaArticles" resultType="kr.co.kmarket.vo.Cs_QnaVO">
+        select a.*, c.cate2Name from `km_cs_qna` as a
+        join `km_cs_cate1` as b
+        on a.qnaCate1 = b.cate1
+        JOIN `km_cs_cate2` AS c
+        ON a.qnaCate2 = c.cate2 and b.cate1 = c.cate1
+        where b.cate1=#{cate1}
+        order by `qnaNo` desc
+        limit #{start}, 10;
+    </select>
+
+    <!-- qna list cate1Name 가져오기 -->
+    <select id="selectCate1Name" resultType="kr.co.kmarket.vo.Cs_Cate1VO">
+        SELECT `cate1Name` FROM `km_cs_cate1`
+        WHERE `cate1` = #{cate1};
+    </select>
+
+
+    <!-- qna list count - 전체 글 수 -->
+    <select id="selectCountTotal" resultType="int">
+        select count(`qnaNo`) from `km_cs_qna` as a
+        join `km_cs_cate1` as b
+        on a.qnaCate1 = b.cate1
+        where b.cate1 = #{cate1};
+    </select>
+
+    <!-- qna list 작성글 상세보기 -->
+    <select id="selectQnaArticle" resultMap="selectArticleResultMap">
+        select a.*, b.cate1Name, c.cate2Name from `km_cs_qna` as a
+        join `km_cs_cate1` as b
+        on a.qnaCate1 = b.cate1
+        join `km_cs_cate2` as c
+        on b.cate1 = c.cate1 and a.qnaCate2 = c.cate2
+        where `qnaNo`=#{qnaNo};
+    </select>
+    <!-- 조회(select) 결과를 상세하게 매핑하기 위한 사용자 정의 Map -->
+    <resultMap id="selectArticleResultMap" type="kr.co.kmarket.vo.Cs_QnaVO">
+        <id property="qnaNo" column="qnaNo"/>
+        <result property="uid" column="uid"/>
+        <result property="qnaTitle" column="qnaTitle"/>
+        <result property="qnaContent" column="qnaContent"/>
+        <result property="qnaCate1" column="qnaCate1"/>
+        <result property="qnaCate2" column="qnaCate2"/>
+        <result property="qnaRdate" column="qnaRdate"/>
+        <result property="qnaRegip" column="qnaRegip"/>
+        <result property="cate1Name" column="cate1Name"/>
+        <result property="cate2Name" column="cate2Name"/>
+    </resultMap>
+
+    <!-- qna list 작성글 등록하기 -->
+    <!-- useGeneratedKeys="true" : 자동으로 생성된 키(AUTO_INCREMENT_KEY)를 가져올 것인지 여부 -->
+    <!-- keyProperty="qnaNo" : 자동으로 생성된 키를 어떤 변수에 저장할 것인지 지정 -->
+    <insert id="insertQnaArticle" useGeneratedKeys="true" keyProperty="qnaNo" >
+        insert into `km_cs_qna` set
+            `uid`=#{uid},
+            `qnaTitle`=#{qnaTitle},
+            `qnaContent`=#{qnaContent},
+            `qnaCate1`=#{qnaCate1},
+            `qnaCate2`=#{qnaCate2},
+            `qnaRdate`=NOW(),
+            `qnaRegip`=#{qnaRegip};
+    </insert>
+    
+    <!-- Qna는 작성글 수정 없음. -->
+    <!-- Qna는 작성글 삭제 없음. -->
+</mapper>

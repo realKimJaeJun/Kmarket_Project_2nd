@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <!-- 2023/02/09 // 심규영 // 관리자 페이징 -->
+    <div class="paging" th:fragment="adminPaging">
+      <span class="prev">
+          <a href="#"><&nbsp;이전</a>
+      </span>
+
+      <span class="num">
+          <a href="#" class="on">1</a>
+          <a href="#">2</a>
+          <a href="#">3</a>
+          <a href="#">4</a>
+          <a href="#">5</a>
+          <a href="#">6</a>
+          <a href="#">7</a>
+      </span>
+
+      <span class="next">
+          <a href="#">다음&nbsp;></a>
+      </span>
+    </div>
+
+    <!-- 2023/02/12 // 김재준 // 고객센터 페이징 -->
+    <div class="page" th:fragment="csPaging">
+            <th:block th:if="${groups[0] > 1}">
+                <a th:href="@{/cs/qna/list(cate1=${cate1},pg=${groups[0]- 1})}" class="prev">이전</a>
+            </th:block>
+            <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+                <a th:href="@{/cs/qna/list(cate1=${cate1},pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+            </th:block>
+            <th:block th:if="${groups[1] < lastPage}">
+                <a th:href="@{/cs/qna/list(cate1=${cate1},pg=${groups[1] + 1})}" class="next">다음</a>
+            </th:block>
+    </div>
+
+    <!-- 2023/02/15 // 김재준 // notice 페이징 -->
+    <div class="page" th:fragment="csNoticePaging">
+        <th:block th:if="${groups[0] > 1}">
+            <a th:href="@{/cs/notice/list(noCate=${cate1},pg=${groups[0]- 1})}" class="prev">이전</a>
+        </th:block>
+        <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+            <a th:href="@{/cs/notice/list(noCate=${cate1},pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+        </th:block>
+        <th:block th:if="${groups[1] < lastPage}">
+            <a th:href="@{/cs/notice/list(noCate=${cate1},pg=${groups[1] + 1})}" class="next">다음</a>
+        </th:block>
+    </div>
+
+    <!-- 2023/02/21 // 김재준 // my/qna 페이징 -->
+    <p class="page" th:fragment="myQnaPaging">
+        <th:block th:if="${groups[0] > 1}">
+            <a th:href="@{/my/qna(pg=${groups[0]- 1})}" class="prev">이전</a>
+        </th:block>
+        <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+            <a th:href="@{/my/qna(pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+        </th:block>
+        <th:block th:if="${groups[1] < lastPage}">
+            <a th:href="@{/my/qna(pg=${groups[1] + 1})}" class="next">다음</a>
+        </th:block>
+    </p>
+    <!-- 2023/02/21 // 김재준 // my/review 페이징 -->
+    <p class="page" th:fragment="myReviewPaging">
+        <th:block th:if="${groups[0] > 1}">
+            <a th:href="@{/my/review(pg=${groups[0]- 1})}" class="prev">이전</a>
+        </th:block>
+        <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+            <a th:href="@{/my/review(pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+        </th:block>
+        <th:block th:if="${groups[1] < lastPage}">
+            <a th:href="@{/my/review(pg=${groups[1] + 1})}" class="next">다음</a>
+        </th:block>
+    </p>
+    <!-- 2023/02/21 // 김재준 // my/ordered 페이징 -->
+    <p class="page" th:fragment="myOrderedPaging">
+        <th:block th:if="${groups[0] > 1}">
+            <a th:href="@{/my/ordered(pg=${groups[0]- 1})}" class="prev">이전</a>
+        </th:block>
+        <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+            <a th:href="@{/my/ordered(pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+        </th:block>
+        <th:block th:if="${groups[1] < lastPage}">
+            <a th:href="@{/my/ordered(pg=${groups[1] + 1})}" class="next">다음</a>
+        </th:block>
+    </p>
+    <!-- 2023/02/21 // 김재준 // my/point 페이징 -->
+    <p class="page" th:fragment="myPointPaging">
+        <th:block th:if="${groups[0] > 1}">
+            <a th:href="@{/my/point(pg=${groups[0]- 1})}" class="prev">이전</a>
+        </th:block>
+        <th:block th:each="num:${#numbers.sequence(groups[0], groups[1])}">
+            <a th:href="@{/my/point(pg=${num})}" th:class="${num == currentPage ? 'on' : 'off'}">[[${num}]]</a>
+        </th:block>
+        <th:block th:if="${groups[1] < lastPage}">
+            <a th:href="@{/my/point(pg=${groups[1] + 1})}" class="next">다음</a>
+        </th:block>
+    </p>
+
+</body>
+</html>
